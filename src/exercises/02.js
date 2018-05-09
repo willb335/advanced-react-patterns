@@ -3,7 +3,14 @@
 import React from 'react'
 import {Switch} from '../switch'
 
+const On = ({children, on}) => (on ? children : null)
+const Off = ({children, on}) => (on ? null : children)
+const Button = ({on, toggle}) => <Switch on={on} onClick={toggle} />
+
 class Toggle extends React.Component {
+  static On = On
+  static Off = Off
+  static Button = Button
   // you can create function components as static properties!
   // for example:
   // static Candy = (props) => <div>CANDY! {props.children}</div>
@@ -23,6 +30,14 @@ class Toggle extends React.Component {
       () => this.props.onToggle(this.state.on),
     )
   render() {
+    const children = React.Children.map(this.props.children, child =>
+      React.cloneElement(child, {
+        on: this.state.on,
+        toggle: this.toggle,
+      }),
+    )
+
+    return <div>{children}</div>
     // we're trying to let people render the components they want within the Toggle component.
     // But the On, Off, and Button components will need access to the internal `on` state as
     // well as the internal `toggle` function for them to work properly. So here we can
@@ -33,8 +48,8 @@ class Toggle extends React.Component {
     // 2. React.cloneElement: https://reactjs.org/docs/react-api.html#cloneelement
     //
     // 🐨 you'll want to completely replace the code below with the above logic.
-    const {on} = this.state
-    return <Switch on={on} onClick={this.toggle} />
+    // const {on} = this.state
+    // return <Switch on={on} onClick={this.toggle} />
   }
 }
 
