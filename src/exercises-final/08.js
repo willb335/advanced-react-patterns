@@ -17,18 +17,24 @@ class Toggle extends React.Component {
   internalSetState(changes, callback) {
     this.setState(state => {
       // handle function setState call
-      const changesObject =
-        typeof changes === 'function' ? changes(state) : changes
+      //   const changesObject =
+      //     typeof changes === 'function' ? changes(state) : changes
+      //
+      //   // apply state reducer
+      //   const reducedChanges =
+      //     this.props.stateReducer(state, changesObject) || {}
+      //
+      //   // return null if there are no changes to be made
+      //   // (to avoid an unecessary rerender)
+      //   return Object.keys(reducedChanges).length
+      //     ? reducedChanges
+      //     : null
+      // }, callback)
 
-      // apply state reducer
-      const reducedChanges =
-        this.props.stateReducer(state, changesObject) || {}
-
-      // return null if there are no changes to be made
-      // (to avoid an unecessary rerender)
-      return Object.keys(reducedChanges).length
-        ? reducedChanges
-        : null
+      return [changes]
+        .map(c => (typeof c === 'function' ? changes(state) : c))
+        .map(c => this.props.stateReducer(state, c) || {})
+        .map(c => (Object.keys(c).length ? c : null))[0]
     }, callback)
   }
   reset = () =>
